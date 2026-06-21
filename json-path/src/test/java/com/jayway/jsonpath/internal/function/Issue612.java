@@ -17,7 +17,7 @@ public class Issue612 {
         DocumentContext documentContext = JsonPath.using(config).parse(json);
         JsonPath query = JsonPath.compile("$.1.2.a.b.c");
         Assertions.assertNull(documentContext.read(query));
-        Assertions.assertNotNull(documentContext.map(query, (object, configuration) -> object));
+        Assertions.assertNull(documentContext.map(query, (object, configuration) -> object));
     }
 
     @Test

@@ -29,7 +29,6 @@ import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
@@ -139,14 +138,13 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public DocumentContext map(String path, MapFunction mapFunction, Predicate... filters) {
-        map(pathFromCache(path, filters), mapFunction);
-        return this;
+        return map(pathFromCache(path, filters), mapFunction);
     }
 
     @Override
     public DocumentContext map(JsonPath path, MapFunction mapFunction) {
         Object obj = path.map(json, mapFunction, configuration);
-        return this;
+        return obj == null ? null : this;
     }
 
     @Override
@@ -216,13 +214,23 @@ public class JsonContext implements DocumentContext {
     private JsonPath pathFromCache(String path, Predicate[] filters) {
         Cache cache = CacheProvider.getCache();
         String cacheKey = filters == null || filters.length == 0
-            ? path : Utils.concat(path, Arrays.toString(filters));
+            ? path : Utils.concat(path, predicatesFingerprint(filters));
         JsonPath jsonPath = cache.get(cacheKey);
         if (jsonPath == null) {
             jsonPath = compile(path, filters);
             cache.put(cacheKey, jsonPath);
         }
         return jsonPath;
+    }
+
+    private static String predicatesFingerprint(Predicate[] filters) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < filters.length; i++) {
+            if (i > 0) sb.append(", ");
+            sb.append(filters[i].toString());
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     private final static class LimitingEvaluationListener implements EvaluationListener {
