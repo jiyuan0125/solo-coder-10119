@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
@@ -200,6 +201,21 @@ public class EvaluationContextImpl implements EvaluationContext {
         @Override
         public Object result() {
             return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FoundResultImpl that = (FoundResultImpl) o;
+            return index == that.index &&
+                    Objects.equals(path, that.path) &&
+                    Objects.equals(result, that.result);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(index, path, result);
         }
     }
 

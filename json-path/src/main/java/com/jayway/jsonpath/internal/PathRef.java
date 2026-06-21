@@ -7,6 +7,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public abstract class PathRef implements Comparable<PathRef>  {
 
@@ -76,6 +77,20 @@ public abstract class PathRef implements Comparable<PathRef>  {
     @Override
     public int compareTo(PathRef o) {
         return this.getAccessor().toString().compareTo(o.getAccessor().toString()) * -1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PathRef pathRef = (PathRef) o;
+        return parent == pathRef.parent &&
+                Objects.equals(getAccessor(), pathRef.getAccessor());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(System.identityHashCode(parent), getAccessor());
     }
 
     public static PathRef create(Object obj, String property){

@@ -68,7 +68,9 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration addEvaluationListeners(EvaluationListener... evaluationListener){
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+        Collection<EvaluationListener> combined = new ArrayList<EvaluationListener>(this.evaluationListeners);
+        combined.addAll(asList(evaluationListener));
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(combined).build();
     }
 
     /**
@@ -198,6 +200,7 @@ public class Configuration {
         }
 
         public ConfigurationBuilder options(Option... flags) {
+            this.options = EnumSet.noneOf(Option.class);
             if(flags.length > 0) {
                 this.options.addAll(asList(flags));
             }
@@ -205,12 +208,15 @@ public class Configuration {
         }
 
         public ConfigurationBuilder options(Set<Option> options) {
-            this.options.addAll(options);
+            this.options = EnumSet.noneOf(Option.class);
+            if (options != null && !options.isEmpty()) {
+                this.options.addAll(options);
+            }
             return this;
         }
 
         public ConfigurationBuilder evaluationListener(EvaluationListener... listener){
-            this.evaluationListener = Arrays.asList(listener);
+            this.evaluationListener = listener == null ? Collections.<EvaluationListener>emptyList() : Arrays.asList(listener);
             return this;
         }
 
@@ -260,8 +266,14 @@ public class Configuration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Configuration that = (Configuration) o;
-        return jsonProvider.getClass() == that.jsonProvider.getClass() &&
-                mappingProvider.getClass() == that.mappingProvider.getClass() &&
-                Objects.equals(options, that.options);
+        return Objects.equals(jsonProvider, that.jsonProvider) &&
+                Objects.equals(mappingProvider, that.mappingProvider) &&
+                Objects.equals(options, that.options) &&
+                Objects.equals(evaluationListeners, that.evaluationListeners);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jsonProvider, mappingProvider, options, evaluationListeners);
     }
 }

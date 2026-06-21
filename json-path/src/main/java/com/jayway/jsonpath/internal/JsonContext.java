@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
@@ -139,8 +140,7 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public DocumentContext map(String path, MapFunction mapFunction, Predicate... filters) {
-        map(pathFromCache(path, filters), mapFunction);
-        return this;
+        return map(pathFromCache(path, filters), mapFunction);
     }
 
     @Override
@@ -239,6 +239,19 @@ public class JsonContext implements DocumentContext {
             } else {
                 return EvaluationContinuation.CONTINUE;
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LimitingEvaluationListener that = (LimitingEvaluationListener) o;
+            return limit == that.limit;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(limit);
         }
     }
 
