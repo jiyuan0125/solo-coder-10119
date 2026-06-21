@@ -20,6 +20,7 @@ import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.MapFunction;
 import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
@@ -29,7 +30,6 @@ import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -145,8 +145,14 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public DocumentContext map(JsonPath path, MapFunction mapFunction) {
-        Object obj = path.map(json, mapFunction, configuration);
-        return obj==null ? null:this;
+        try {
+            path.map(json, mapFunction, configuration);
+        } catch (PathNotFoundException e) {
+            if (!configuration.containsOption(Option.SUPPRESS_EXCEPTIONS)) {
+                throw e;
+            }
+        }
+        return this;
     }
 
     @Override
@@ -215,8 +221,17 @@ public class JsonContext implements DocumentContext {
 
     private JsonPath pathFromCache(String path, Predicate[] filters) {
         Cache cache = CacheProvider.getCache();
-        String cacheKey = filters == null || filters.length == 0
-            ? path : Utils.concat(path, Arrays.toString(filters));
+        String cacheKey;
+        if (filters == null || filters.length == 0) {
+            cacheKey = path;
+        } else {
+            StringBuilder sb = new StringBuilder(path);
+            sb.append('|').append(filters.length);
+            for (Predicate f : filters) {
+                sb.append('|').append(f.getClass().getName()).append(':').append(Integer.toHexString(f.hashCode()));
+            }
+            cacheKey = sb.toString();
+        }
         JsonPath jsonPath = cache.get(cacheKey);
         if (jsonPath == null) {
             jsonPath = compile(path, filters);

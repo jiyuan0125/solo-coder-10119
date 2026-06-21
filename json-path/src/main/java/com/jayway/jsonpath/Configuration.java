@@ -59,7 +59,7 @@ public class Configuration {
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
-        this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+        this.evaluationListeners = Collections.unmodifiableList(new ArrayList<EvaluationListener>(evaluationListeners));
     }
 
     /**
