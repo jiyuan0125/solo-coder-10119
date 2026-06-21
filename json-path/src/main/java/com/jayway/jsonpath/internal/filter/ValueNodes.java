@@ -99,6 +99,11 @@ public interface ValueNodes {
             return !(compiledPattern != null ? !compiledPattern.equals(that.compiledPattern) : that.compiledPattern != null);
 
         }
+
+        @Override
+        public int hashCode() {
+            return compiledPattern != null ? compiledPattern.hashCode() : 0;
+        }
     }
 
     class JsonNode extends ValueNode {
@@ -194,6 +199,11 @@ public interface ValueNodes {
 
             return !(json != null ? !json.equals(jsonNode.json) : jsonNode.json != null);
         }
+
+        @Override
+        public int hashCode() {
+            return json != null ? json.hashCode() : 0;
+        }
     }
 
     class StringNode extends ValueNode {
@@ -272,6 +282,11 @@ public interface ValueNodes {
             return !(string != null ? !string.equals(that.getString()) : that.getString() != null);
 
         }
+
+        @Override
+        public int hashCode() {
+            return string != null ? string.hashCode() : 0;
+        }
     }
 
     class NumberNode extends ValueNode {
@@ -327,6 +342,11 @@ public interface ValueNodes {
                 return number.compareTo(that.number) == 0;
             }
         }
+
+        @Override
+        public int hashCode() {
+            return number != null ? number.hashCode() : 0;
+        }
     }
 
     //workaround for issue: https://github.com/json-path/JsonPath/issues/613
@@ -377,6 +397,11 @@ public interface ValueNodes {
             OffsetDateTimeNode that = ((ValueNode)o).asOffsetDateTimeNode();
             return dateTime.compareTo(that.dateTime) == 0;
         }
+
+        @Override
+        public int hashCode() {
+            return dateTime.hashCode();
+        }
     }
 
 
@@ -418,6 +443,11 @@ public interface ValueNodes {
             BooleanNode that = (BooleanNode) o;
 
             return !(value != null ? !value.equals(that.value) : that.value != null);
+        }
+
+        @Override
+        public int hashCode() {
+            return value != null ? value.hashCode() : 0;
         }
     }
 
@@ -463,6 +493,11 @@ public interface ValueNodes {
 
             return !(clazz != null ? !clazz.equals(that.clazz) : that.clazz != null);
         }
+
+        @Override
+        public int hashCode() {
+            return clazz != null ? clazz.hashCode() : 0;
+        }
     }
 
     class NullNode extends ValueNode {
@@ -496,6 +531,11 @@ public interface ValueNodes {
 
             return true;
         }
+
+        @Override
+        public int hashCode() {
+            return 0;
+        }
     }
 
     class UndefinedNode extends ValueNode {
@@ -516,6 +556,11 @@ public interface ValueNodes {
         @Override
         public boolean equals(Object o) {
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(this);
         }
     }
 
@@ -547,6 +592,11 @@ public interface ValueNodes {
         @Override
         public boolean equals(Object o) {
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(this);
         }
 
         @Override
@@ -608,6 +658,11 @@ public interface ValueNodes {
             ValueListNode that = (ValueListNode) o;
 
             return nodes.equals(that.nodes);
+        }
+
+        @Override
+        public int hashCode() {
+            return nodes.hashCode();
         }
 
         @Override

@@ -7,6 +7,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public abstract class PathRef implements Comparable<PathRef>  {
 
@@ -146,6 +147,19 @@ public abstract class PathRef implements Comparable<PathRef>  {
             renameInMap(target, oldKeyName, newKeyName, configuration);
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            RootPathRef that = (RootPathRef) o;
+            return Objects.equals(parent, that.parent);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(parent);
+        }
+
     }
 
     private static class ArrayIndexPathRef extends PathRef {
@@ -216,6 +230,19 @@ public abstract class PathRef implements Comparable<PathRef>  {
             }
             return super.compareTo(o);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ArrayIndexPathRef that = (ArrayIndexPathRef) o;
+            return index == that.index && Objects.equals(parent, that.parent);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(parent, index);
+        }
     }
 
     private static class ObjectPropertyPathRef extends PathRef {
@@ -279,6 +306,19 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public Object getAccessor() {
             return property;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ObjectPropertyPathRef that = (ObjectPropertyPathRef) o;
+            return Objects.equals(parent, that.parent) && Objects.equals(property, that.property);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(parent, property);
+        }
     }
 
     private static class ObjectMultiPropertyPathRef extends PathRef {
@@ -328,6 +368,19 @@ public abstract class PathRef implements Comparable<PathRef>  {
         @Override
         public Object getAccessor() {
             return Utils.join("&&", properties);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ObjectMultiPropertyPathRef that = (ObjectMultiPropertyPathRef) o;
+            return Objects.equals(parent, that.parent) && Objects.equals(properties, that.properties);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(parent, properties);
         }
     }
 }

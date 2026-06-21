@@ -146,7 +146,7 @@ public class JsonContext implements DocumentContext {
     @Override
     public DocumentContext map(JsonPath path, MapFunction mapFunction) {
         Object obj = path.map(json, mapFunction, configuration);
-        return obj==null ? null:this;
+        return this;
     }
 
     @Override

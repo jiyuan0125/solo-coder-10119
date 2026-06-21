@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class CompiledPath implements Path {
 
@@ -124,5 +125,18 @@ public class CompiledPath implements Path {
 
     public RootPathToken getRoot() {
         return root;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompiledPath that = (CompiledPath) o;
+        return isRootPath == that.isRootPath && Objects.equals(root, that.root);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(root, isRootPath);
     }
 }
