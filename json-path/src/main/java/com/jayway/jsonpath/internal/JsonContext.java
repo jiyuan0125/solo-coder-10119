@@ -228,7 +228,7 @@ public class JsonContext implements DocumentContext {
             StringBuilder sb = new StringBuilder(path);
             sb.append('|').append(filters.length);
             for (Predicate f : filters) {
-                sb.append('|').append(f.getClass().getName()).append(':').append(Integer.toHexString(f.hashCode()));
+                sb.append('|').append(f.toString());
             }
             cacheKey = sb.toString();
         }
